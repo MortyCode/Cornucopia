@@ -21,7 +21,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow id="百宝箱" secondary="true"
+        <toolWindow id="丰饶之角" secondary="true"
                     icon="AllIcons.General.Modified" anchor="right"
                     factoryClass="com.hs.tools.MyToolWindowFactory"/>
     </extensions>
