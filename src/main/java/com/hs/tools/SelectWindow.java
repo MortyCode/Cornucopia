@@ -6,25 +6,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.Icons;
-import com.intellij.util.ui.ColorIcon;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.swing.*;
+import java.awt.event.KeyListener;
 
 /**
  * @author ：河神
- * @date ：Created in 2021/6/25 3:43 下午
+ * @date ：Created in 2021/6/25 11:47 下午
  */
-public class MyToolWindow {
+public class SelectWindow {
 
-    private JPanel myToolWindowContent;
-    private Project project;
-
+    private JPanel panel1;
+    private JTabbedPane tabbedPane1;
 
     private JTextArea textContent;
-
     private JButton formatButton;
     private JButton unFormatButton;
     private JButton transferredMeaning;
@@ -34,13 +31,24 @@ public class MyToolWindow {
     private Gson formatGson = new GsonBuilder().setPrettyPrinting().create();;
 
 
-    public MyToolWindow(Project project) {
-        this.project = project;
+    private Project project;
 
+    public SelectWindow(Project project) {
+        this.project = project;
         formatButton.addActionListener(e -> format());
         unFormatButton.addActionListener(e-> unFormat());
         transferredMeaning.addActionListener(e-> transferredMeaning());
         unTransferredMeaning.addActionListener(e-> unTransferredMeaning());
+
+    }
+
+    public JPanel getContent() {
+        return panel1;
+    }
+
+    public void copyAll(){
+        textContent.selectAll();
+        textContent.copy();
     }
 
 
@@ -50,12 +58,16 @@ public class MyToolWindow {
         String toJson = unFormatGson.toJson(jsonObject);
         String escapeJava = StringEscapeUtils.escapeJava(toJson);
         textContent.setText(escapeJava);
+
+        copyAll();
     }
 
     public void unTransferredMeaning(){
         String text = textContent.getText();
         String unescapeJava = StringEscapeUtils.unescapeJava(text);
         textContent.setText(unescapeJava);
+
+        copyAll();
     }
 
     public void format() {
@@ -82,8 +94,10 @@ public class MyToolWindow {
         }
 
         if (!flag){
-            Messages.showMessageDialog( project,"JSON格式错误", "JSON格式化",Icons.DELETE_ICON);
+            Messages.showMessageDialog( project,"JSON格式错误", "JSON格式化", Icons.DELETE_ICON);
         }
+
+        copyAll();
     }
 
     public void unFormat(){
@@ -94,14 +108,9 @@ public class MyToolWindow {
             textContent.setText(toJson);
         }catch (JsonSyntaxException jsonSyntaxException){
             Messages.showMessageDialog(project,  "JSON压缩失败","JSON格式化", Icons.DELETE_ICON);
-
         }
+
+        copyAll();
     }
-
-    public JPanel getContent() {
-        return myToolWindowContent;
-    }
-
-
 
 }
