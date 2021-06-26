@@ -18,11 +18,12 @@ public class MyToolWindowFactory implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project,
                                         @NotNull ToolWindow toolWindow) {
 
-        SelectWindow toolsWindow = new SelectWindow(project);
+        SelectWindow toolsWindow = new SelectWindow(project,toolWindow);
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(toolsWindow.getContent(), "", false);
 
-        toolWindow.getContentManager().addContent(content);
+        ContentManager contentManager = toolWindow.getContentManager();
+        contentManager.addContent(content);
     }
 }

@@ -82,6 +82,8 @@
                   <component id="1716a" class="javax.swing.JTextArea" binding="textContent">
                     <constraints/>
                     <properties>
+                      <foreground color="-16777216"/>
+                      <lineWrap value="false"/>
                       <text value=""/>
                     </properties>
                   </component>

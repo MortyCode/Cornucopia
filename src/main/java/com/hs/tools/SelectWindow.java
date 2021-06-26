@@ -6,11 +6,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.Icons;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 /**
  * @author ：河神
@@ -32,18 +39,24 @@ public class SelectWindow {
 
 
     private Project project;
+    private ToolWindow toolWindow;
 
-    public SelectWindow(Project project) {
+    public SelectWindow(Project project,ToolWindow toolWindow) {
         this.project = project;
+        this.toolWindow = toolWindow;
         formatButton.addActionListener(e -> format());
         unFormatButton.addActionListener(e-> unFormat());
         transferredMeaning.addActionListener(e-> transferredMeaning());
         unTransferredMeaning.addActionListener(e-> unTransferredMeaning());
-
     }
 
     public JPanel getContent() {
         return panel1;
+    }
+
+    public void init(){
+        textContent.paste();
+        format();
     }
 
     public void copyAll(){
