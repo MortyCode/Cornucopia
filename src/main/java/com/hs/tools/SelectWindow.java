@@ -9,15 +9,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.Icons;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.KeyListener;
-import java.io.IOException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * @author ：河神
@@ -33,6 +30,7 @@ public class SelectWindow {
     private JButton unFormatButton;
     private JButton transferredMeaning;
     private JButton unTransferredMeaning;
+    private JButton copyButton;
 
     private Gson unFormatGson = new Gson();
     private Gson formatGson = new GsonBuilder().setPrettyPrinting().create();;
@@ -41,23 +39,75 @@ public class SelectWindow {
     private Project project;
     private ToolWindow toolWindow;
 
+    /**
+     * 0:未格式化
+     * 1:格式化
+     */
+    private int status = 0;
+
     public SelectWindow(Project project,ToolWindow toolWindow) {
         this.project = project;
         this.toolWindow = toolWindow;
-        formatButton.addActionListener(e -> format());
+
+        formatButton.addActionListener(e -> format(true));
         unFormatButton.addActionListener(e-> unFormat());
+        copyButton.addActionListener(e-> copyAll());
         transferredMeaning.addActionListener(e-> transferredMeaning());
         unTransferredMeaning.addActionListener(e-> unTransferredMeaning());
+
+        if (!textContent.getBackground().equals(Color.WHITE)){
+            textContent.setForeground(Color.WHITE);
+        }
+
+        textContent.addPropertyChangeListener("background",e->{
+            if (!textContent.getBackground().equals(Color.WHITE)){
+                textContent.setForeground(Color.WHITE);
+            }else{
+                textContent.setForeground(Color.BLACK);
+            }
+        });
+
+        textContent.addMouseListener(new MouseListener(){
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int clickCount = e.getClickCount();
+                if (clickCount==2){
+                    if (status==0){
+                        format(true);
+                    }else{
+                        unFormat();
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
     }
 
     public JPanel getContent() {
         return panel1;
     }
 
-    public void init(){
-        textContent.paste();
-        format();
-    }
 
     public void copyAll(){
         textContent.selectAll();
@@ -71,25 +121,25 @@ public class SelectWindow {
         String toJson = unFormatGson.toJson(jsonObject);
         String escapeJava = StringEscapeUtils.escapeJava(toJson);
         textContent.setText(escapeJava);
-
-        copyAll();
     }
 
     public void unTransferredMeaning(){
         String text = textContent.getText();
         String unescapeJava = StringEscapeUtils.unescapeJava(text);
         textContent.setText(unescapeJava);
-
-        copyAll();
     }
 
-    public void format() {
+    public void format(boolean infoFlag) {
         String text = textContent.getText();
+        if (StringUtils.isBlank(text)){
+            return;
+        }
         boolean flag = true;
         try {
             JsonObject jsonObject = formatGson.fromJson(text, JsonObject.class);
             String toJson = formatGson.toJson(jsonObject);
             textContent.setText(toJson);
+            status = 1;
         }catch (JsonSyntaxException jsonSyntaxException){
             flag = false;
         }
@@ -100,30 +150,28 @@ public class SelectWindow {
                 JsonObject jsonObject = formatGson.fromJson(unescapeJava, JsonObject.class);
                 String toJson = formatGson.toJson(jsonObject);
                 textContent.setText(toJson);
+                status = 1;
                 flag = true;
             }catch (JsonSyntaxException jsonSyntaxException){
                 flag = false;
             }
         }
 
-        if (!flag){
+        if (!flag&&infoFlag){
             Messages.showMessageDialog( project,"JSON格式错误", "JSON格式化", Icons.DELETE_ICON);
         }
-
-        copyAll();
     }
 
-    public void unFormat(){
+    private void unFormat(){
         try {
             String text = textContent.getText();
             JsonObject jsonObject = unFormatGson.fromJson(text, JsonObject.class);
             String toJson = unFormatGson.toJson(jsonObject);
             textContent.setText(toJson);
+            status = 0;
         }catch (JsonSyntaxException jsonSyntaxException){
             Messages.showMessageDialog(project,  "JSON压缩失败","JSON格式化", Icons.DELETE_ICON);
         }
-
-        copyAll();
     }
 
 }

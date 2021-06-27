@@ -1,28 +1,24 @@
 <idea-plugin>
     <id>org.example.heshen-git</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <name>HsTools</name>
+    <vendor email="lhp0305@vip.163.com" url="https://www.rcode.top">河神</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <description><![CDATA[
-    Enter short description for your plugin here.<br>
-    <em>most HTML tags may be used</em>
-    ]]></description>
+    <description><![CDATA[JSON Format Tools Tools .]]></description>
 
     <change-notes>
         <![CDATA[
       <ul>
-        <li><b>2.0.0</b> Convert to Gradle-based plugin.</li>
-        <li><b>1.0.0</b> Release 2018.3 and earlier.</li>
+        <li><b>2.0.0</b> init.</li>
       </ul>
     ]]>
     </change-notes>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <toolWindow id="丰饶之角" secondary="true"
-                    icon="AllIcons.General.Modified" anchor="right"
+        <toolWindow id="HsTools" secondary="true"
+                    anchor="right"
                     factoryClass="com.hs.tools.MyToolWindowFactory"/>
     </extensions>
 
